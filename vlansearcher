@@ -1,15 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
 
 import telnetlib
 import re
 import subprocess as sp
 import argparse
 import signal
-import readline
+# import readline
 
 
-username = 'TACACS+/LOCAL_login'
-password = 'PASSWORD'
+username = 'vlans'
+password = 'Cegthcrhbgn'
 command = 'show vlan'
 
 # re variables
@@ -68,34 +68,33 @@ def stfn_input(start, finish):
     return start, finish
 
 
-def show_vlans(ip, username, password, command):
-    with telnetlib.Telnet(ip) as telnet:
-        telnet.expect([b'ogin:', b'sername:'])
-        telnet.write(to_bytes(username))
-        telnet.read_until(b'assword:')
-        telnet.write(to_bytes(password))
-        telnet.write(to_bytes(command))
-        telnet.read_very_eager()
-        telnet.expect([b'>', b'#'], timeout=2)
-        result = ""
-
-        while True:
+def show_vlans(ip, username, password, command):                                   
+    with telnetlib.Telnet(ip) as telnet:                                           
+        telnet.expect([b'ogin:', b'sername:'])                                     
+        telnet.write(to_bytes(username))                                           
+        telnet.read_until(b'assword:')                                             
+        telnet.write(to_bytes(password))                                           
+        telnet.write(to_bytes(command))                                            
+        telnet.read_very_eager()                                                   
+        telnet.expect([b'>', b'#'], timeout=2)                                     
+        result = ""                                                                
+                                                                                   
+        while True:                                                                
             ind, match, output = telnet.expect([b'[Mm]ore', b'[#>]'], timeout=2)
-            output = output.decode("utf-8")
-            if re.findall(r'[Ee]rror', output):
-                print('\nOS or the vendor is not yet suported\n')
-                exit(1)
-            result += output
-            if ind in (1, -1):
-                break
-            telnet.write(b" ")
-
-        result = result.split()
-        result = [i for i in result if re.findall(r'^\d{1,4}$', i)]
-        result = [int(i) for i in result]
-
-    return result
-
+            output = output.decode("utf-8")                                        
+            if re.findall(r'[Ee]rror', output):                                    
+                print('\nOS or the vendor is not yet suported\n')                  
+                exit(1)                                                            
+            result += output                                                       
+            if ind in (1, -1):                                                     
+                break                                                              
+            telnet.write(b" ")                                                     
+                                                                                   
+        result = result.split()                                                    
+        result = [i for i in result if re.findall(r'^\d{1,4}$', i)]                
+        result = [int(i) for i in result]                                          
+                                                                                   
+    return result 
 
 st = args.st
 fn = args.fn
@@ -123,19 +122,19 @@ else:
         st, fn = value_swapper(st, fn)
 
 
-used_vlans = show_vlans(args.ip, username, password, command)
+used_vlans = show_vlans(args.ip, username, password, command)                   
 result_list = list(set(used_vlans) ^ set(list(range(1, 4095))))
-result_list = [i for i in result_list if i >= int(st) and i <= int(fn)]
-
-
-if len(result_list) == 0:
-    print('\nAll vlan numbers in the specified range are used')
-    exit(0)
-else:
-    count = 0
-    for i in result_list:
-        print(f'{i:>4d}', end=' ')
-        count += 1
-        if count % 20 == 0:
-            print('\r')
-print('\r')
+result_list = [i for i in result_list if i >= int(st) and i <= int(fn)]                                        
+                                                                                                               
+                                                                                                               
+if len(result_list) == 0:                                                       
+    print('\nIn the selected range, all vlan numbers are busy')                                                
+    exit(0)                                                                                                    
+else:                                                                                                          
+    count = 0                                                                                                  
+    for i in result_list:                                                                                      
+        print(f'{i:>4d}', end=' ')                                                                             
+        count += 1                                                                                             
+        if count % 20 == 0:                                                                                    
+            print('\r')                                                         
+print('\r')              
