@@ -5,7 +5,7 @@ import re
 import subprocess as sp
 import argparse
 import signal
-# import readline
+import readline
 
 
 username = 'LOGIN'
@@ -96,6 +96,7 @@ def show_vlans(ip, username, password, command):
 
     return result
 
+
 st = args.st
 fn = args.fn
 
@@ -123,7 +124,7 @@ else:
 
 
 used_vlans = show_vlans(args.ip, username, password, command)
-result_list = list(set(used_vlans) ^ set(list(range(1, 4095))))
+result_list = list(set(used_vlans) ^ set(range(1, 4095)))
 result_list = [i for i in result_list if i >= int(st) and i <= int(fn)]
 
 
