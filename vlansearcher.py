@@ -8,8 +8,8 @@ import signal
 import readline
 
 
-username = 'LOGIN'
-password = 'PASSWORD'
+username = 'guryanov-ao'
+password = '78*Hedgehog'
 command = 'show vlan'
 
 # re variables
