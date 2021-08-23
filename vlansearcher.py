@@ -44,7 +44,7 @@ def value_swapper(start, finish):
     while True:
         answer = input('Swap values? y/n: ')
         if not re.match(answer_re, answer):
-            print('\nWhat the fuck?!')
+            print('\ninvalid value.')
             continue
         else:
             if answer.lower() == 'n':
